@@ -36,12 +36,12 @@ app.get('/', (req, res) => {
     res.render('home')
 });
 
-app.get('/campgrounds', wrapAsync(async (req, res) => {
+app.get('/campgrounds', wrapAsync(async (req, res, next) => {
     const campgrounds = await Campground.find({});
     res.render('campgrounds/index.ejs', { campgrounds })
 }))
 
-app.get('/makeCampground', wrapAsync(async (req, res) => {
+app.get('/makeCampground', wrapAsync(async (req, res, next) => {
     const camp = new Campground({ title: 'My Backyard', description: 'cheap camping' });
     await camp.save();
     res.send(camp)
@@ -51,7 +51,7 @@ app.get('/campground/new', (req, res) => {
     res.render('campgrounds/new')
 });
 
-app.get('/campgrounds/:id', wrapAsync(async (req, res) => {
+app.get('/campgrounds/:id', wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
     console.log(campground)
@@ -59,7 +59,7 @@ app.get('/campgrounds/:id', wrapAsync(async (req, res) => {
 }));
 
 
-app.post('/campgrounds', wrapAsync(async (req, res) => {
+app.post('/campgrounds', wrapAsync(async (req, res, next) => {
     // if(!req.body.campground) throw new ExpressErrors('Please complete the form correctly', 400)
 
     const campgroundSchema = Joi.object({
@@ -78,14 +78,14 @@ app.post('/campgrounds', wrapAsync(async (req, res) => {
     res.redirect(`campgrounds/${campground._id}`)
 }));
 
-app.get('/campgrounds/:id/edit', wrapAsync(async (req, res) => {
+app.get('/campgrounds/:id/edit', wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
     // console.log(campground)
     res.render('campgrounds/edit.ejs', { campground })
 }));
 
-app.put('/campgrounds/:id', wrapAsync(async (req, res) => {
+app.put('/campgrounds/:id', wrapAsync(async (req, res, next) => {
     const {id} = req.params;
     const campground = await Campground.findByIdAndUpdate(id, req.body.campground, {runValidators: true, new: true});
     // console.log(req.body)
@@ -93,7 +93,7 @@ app.put('/campgrounds/:id', wrapAsync(async (req, res) => {
     res.redirect(`${id}`)
 }));
 
-app.delete('/campgrounds/:id', wrapAsync(async (req, res) => {
+app.delete('/campgrounds/:id', wrapAsync(async (req, res, next) => {
     const {id} = req.params;
     const campground = await Campground.findByIdAndDelete(id)
     res.redirect('/campgrounds')
